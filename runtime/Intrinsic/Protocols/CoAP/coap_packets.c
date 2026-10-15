@@ -237,6 +237,16 @@ int serialize_coap_message(const CoapMessage *message,
             if (out_off + 1 > out_buf_size) return -1;
             out_buf[out_off++] = COAP_PAYLOAD_MARKER;   /* dangling marker, no bytes */
         }
+        /* Monitor-injected payload where the request carried none: driven from
+         * the live message (shadow has no payload to copy). */
+        else if (message->payload != NULL && sizes->payload == NULL &&
+                 message->payload_length > 0)
+        {
+            if (out_off + 1 + message->payload_length > out_buf_size) return -1;
+            out_buf[out_off++] = COAP_PAYLOAD_MARKER;
+            memcpy(out_buf + out_off, message->payload, message->payload_length);
+            out_off += message->payload_length;
+        }
         /* Payload — bring across verbatim from shadow. */
         else if (sizes->payload != NULL && sizes->payload_length > 0)
         {

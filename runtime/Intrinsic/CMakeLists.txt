@@ -84,6 +84,10 @@ set(SRC_FILES
 	Protocols/CoAP/monitors/unrecognized-options.c
 	Protocols/CoAP/monitors/token-spoof.c
 	Protocols/CoAP/monitors/option-length.c
+	Protocols/CoAP/monitors/non-critical-option.c
+	Protocols/CoAP/monitors/elective-bad-length.c
+	Protocols/CoAP/monitors/dup-elective-option.c
+	Protocols/CoAP/monitors/reserved-option-number.c
 	Protocols/CoAP/monitors/payload-marker.c
 	Protocols/CoAP/monitors/separate-response.c
 	Protocols/CoAP/monitors/mid-spoof.c
@@ -94,6 +98,13 @@ set(SRC_FILES
 	Protocols/CoAP/monitors/diff-testing/token-length-diff-testing.c
 	Protocols/CoAP/monitors/diff-testing/mid-diff-testing.c
 	Protocols/CoAP/monitors/diff-testing/type-code-diff-testing.c
+	Protocols/CoAP/monitors/diff-testing/header-joint-diff-testing.c
+	Protocols/CoAP/monitors/diff-testing/option-joint-diff-testing.c
+	Protocols/CoAP/monitors/diff-testing/two-options-diff-testing.c
+	Protocols/CoAP/monitors/diff-testing/code-option-diff-testing.c
+	Protocols/CoAP/monitors/diff-testing/payload-joint-diff-testing.c
+	Protocols/CoAP/monitors/diff-testing/opt-len-boundary-diff-testing.c
+	Protocols/CoAP/monitors/diff-testing/dup-option-diff-testing.c
 	# Differential Testing Monitors
 	Protocols/DTLS/monitors/diff-testing/content-type-diff-testing.c
 	Protocols/DTLS/monitors/diff-testing/epoch-diff-testing.c

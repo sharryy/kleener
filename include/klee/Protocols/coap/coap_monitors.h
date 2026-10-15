@@ -27,6 +27,10 @@
 #define coap_separate_token_spoof_requirement 14
 #define coap_separate_token_ok_requirement 15
 #define coap_mid_spoof_requirement 17
+#define coap_non_critical_option_requirement 18
+#define coap_elective_bad_length_requirement 19
+#define coap_dup_elective_requirement 20
+#define coap_reserved_option_requirement 21
 
 /* ---- Differential-testing RECORDING monitor IDs ----
  * Numbered from 100 to stay clear of the conformance-monitor range above. A
@@ -43,6 +47,13 @@
 #define coap_token_length_diff_test 103
 #define coap_mid_diff_test 104
 #define coap_type_code_diff_test 105
+#define coap_header_joint_diff_test 106
+#define coap_option_joint_diff_test 107
+#define coap_two_options_diff_test 108
+#define coap_code_option_diff_test 109
+#define coap_payload_joint_diff_test 110
+#define coap_opt_len_boundary_diff_test 111
+#define coap_dup_option_diff_test 112
 
 /* ---- Monitor dispatch table ----
  * One monitor handle per (requirement, side). Every requirement currently
@@ -138,5 +149,27 @@ void mid_diff_testing_server(CoapMessage *message, bool is_message_client_genera
 /* Makes request type AND code symbolic to explore the type-x-code acceptance
  * matrix (RFC 7252 §§4.1-4.3); subsumes the Empty-message requirement. */
 void type_code_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+
+/* Multi-field monitors: whole header; one injected option; two injected options; code x Uri-Path number. */
+void header_joint_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void option_joint_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void two_options_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void code_option_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+
+/* Payload shape x code; one option over the length-encoding boundaries; a repeated option number. */
+void payload_joint_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_len_boundary_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void dup_option_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+
+/* Conformance: unknown critical option in a NON request (§5.4.1/§4.3); elective
+ * option with an out-of-range length must be ignored (§5.4.3 + §5.4.1). */
+void is_coap_non_critical_option_valid(CoapMessage *message, bool is_message_client_generated);
+void is_coap_elective_bad_length_valid(CoapMessage *message, bool is_message_client_generated);
+
+/* Conformance: a repeated elective option must be ignored (§5.4.5 + §5.4.1). */
+void is_coap_dup_elective_option_valid(CoapMessage *message, bool is_message_client_generated);
+
+/* Conformance: a Reserved option number is elective and must be ignored (§5.4.1 / §12.2). */
+void is_coap_reserved_option_number_valid(CoapMessage *message, bool is_message_client_generated);
 
 #endif

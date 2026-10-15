@@ -43,6 +43,10 @@ coap_monitor_handle set_coap_monitor_handle(int experiment, SIDE side_to_check)
         [coap_separate_token_spoof_requirement] = {is_coap_separate_token_spoof,   is_coap_separate_token_spoof},
         [coap_separate_token_ok_requirement]    = {is_coap_separate_token_ok,      is_coap_separate_token_ok},
         [coap_mid_spoof_requirement]            = {is_coap_mid_spoofable,          is_coap_mid_spoofable},
+        [coap_non_critical_option_requirement]  = {is_coap_non_critical_option_valid, is_coap_non_critical_option_valid},
+        [coap_elective_bad_length_requirement]  = {is_coap_elective_bad_length_valid, is_coap_elective_bad_length_valid},
+        [coap_dup_elective_requirement]         = {is_coap_dup_elective_option_valid, is_coap_dup_elective_option_valid},
+        [coap_reserved_option_requirement]      = {is_coap_reserved_option_number_valid, is_coap_reserved_option_number_valid},
 
         /* Differential-testing recording monitors (IDs from 100). Server-side
          * only: each drives both directions internally via the
@@ -53,6 +57,13 @@ coap_monitor_handle set_coap_monitor_handle(int experiment, SIDE side_to_check)
         [coap_token_length_diff_test]           = {token_length_diff_testing_server, NULL},
         [coap_mid_diff_test]                    = {mid_diff_testing_server,          NULL},
         [coap_type_code_diff_test]              = {type_code_diff_testing_server,    NULL},
+        [coap_header_joint_diff_test]           = {header_joint_diff_testing_server, NULL},
+        [coap_option_joint_diff_test]           = {option_joint_diff_testing_server, NULL},
+        [coap_two_options_diff_test]            = {two_options_diff_testing_server,  NULL},
+        [coap_code_option_diff_test]            = {code_option_diff_testing_server,  NULL},
+        [coap_payload_joint_diff_test]          = {payload_joint_diff_testing_server,   NULL},
+        [coap_opt_len_boundary_diff_test]       = {opt_len_boundary_diff_testing_server, NULL},
+        [coap_dup_option_diff_test]             = {dup_option_diff_testing_server,      NULL},
     };
 
     if (experiment < 0 || experiment >= (int)(sizeof(table) / sizeof(table[0])))
