@@ -54,6 +54,8 @@
 #define coap_payload_joint_diff_test 110
 #define coap_opt_len_boundary_diff_test 111
 #define coap_dup_option_diff_test 112
+#define coap_opt_zero_length_diff_test 113
+#define coap_opt_len_full_diff_test 114
 
 /* ---- Monitor dispatch table ----
  * One monitor handle per (requirement, side). Every requirement currently
@@ -160,6 +162,8 @@ void code_option_diff_testing_server(CoapMessage *message, bool is_message_clien
 void payload_joint_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
 void opt_len_boundary_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
 void dup_option_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_zero_length_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_len_full_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
 
 /* Conformance: unknown critical option in a NON request (§5.4.1/§4.3); elective
  * option with an out-of-range length must be ignored (§5.4.3 + §5.4.1). */

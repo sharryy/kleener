@@ -105,6 +105,8 @@ set(SRC_FILES
 	Protocols/CoAP/monitors/diff-testing/payload-joint-diff-testing.c
 	Protocols/CoAP/monitors/diff-testing/opt-len-boundary-diff-testing.c
 	Protocols/CoAP/monitors/diff-testing/dup-option-diff-testing.c
+	Protocols/CoAP/monitors/diff-testing/opt-zero-length-diff-testing.c
+	Protocols/CoAP/monitors/diff-testing/opt-len-full-diff-testing.c
 	# Differential Testing Monitors
 	Protocols/DTLS/monitors/diff-testing/content-type-diff-testing.c
 	Protocols/DTLS/monitors/diff-testing/epoch-diff-testing.c

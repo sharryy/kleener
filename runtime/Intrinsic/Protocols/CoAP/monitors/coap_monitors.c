@@ -64,6 +64,8 @@ coap_monitor_handle set_coap_monitor_handle(int experiment, SIDE side_to_check)
         [coap_payload_joint_diff_test]          = {payload_joint_diff_testing_server,   NULL},
         [coap_opt_len_boundary_diff_test]       = {opt_len_boundary_diff_testing_server, NULL},
         [coap_dup_option_diff_test]             = {dup_option_diff_testing_server,      NULL},
+        [coap_opt_zero_length_diff_test]        = {opt_zero_length_diff_testing_server, NULL},
+        [coap_opt_len_full_diff_test]           = {opt_len_full_diff_testing_server,    NULL},
     };
 
     if (experiment < 0 || experiment >= (int)(sizeof(table) / sizeof(table[0])))
