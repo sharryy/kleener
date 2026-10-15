@@ -2835,6 +2835,13 @@ void Executor::executeInstruction(ExecutionState &state, KInstruction *ki) {
     break;
   }
 
+  /* KLEE values are concrete or symbolic, never poison, so freeze is a copy. */
+  case Instruction::Freeze: {
+    ref<Expr> result = eval(ki, 0, state).value;
+    bindLocal(ki, state, result);
+    break;
+  }
+
     // Floating point instructions
   case Instruction::FNeg: {
     ref<ConstantExpr> arg =
