@@ -14,8 +14,8 @@
 static int local_state = INIT;
 static uint8_t opt_value[VALUE_MAX];
 
-void opt_len_full_diff_testing_server(CoapMessage *message,
-                                      bool is_message_client_generated) {
+void opt_len_diff_testing_server(CoapMessage *message,
+                                 bool is_message_client_generated) {
   if (is_message_client_generated && local_state == INIT &&
       message->num_options < COAP_MAX_OPTIONS_LENGTH) {
     uint8_t len;
@@ -26,7 +26,6 @@ void opt_len_full_diff_testing_server(CoapMessage *message,
       opt_value[i] = 'a';
 
     kleener_make_symbolic(&len, sizeof(len), "coap_opt_len");
-    klee_assume(len <= VALUE_MAX);
 
     message->options[last].number = 15; /* Uri-Query, declared range 0..255 */
     message->options[last].length = len;

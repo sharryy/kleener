@@ -9,8 +9,6 @@
 #define INJECTED 1
 #define DONE     2
 
-#define OPT_MAX_NUMBER 300
-
 static int local_state = INIT;
 
 void code_option_diff_testing_server(CoapMessage *message, bool is_message_client_generated)
@@ -19,10 +17,12 @@ void code_option_diff_testing_server(CoapMessage *message, bool is_message_clien
     {
         uint16_t number;
 
-        kleener_make_symbolic(&message->header.code, sizeof(message->header.code), "coap_req_code");
-        kleener_make_symbolic(&number, sizeof(number), "coap_opt_number");
-        klee_assume(message->header.code < 8);
-        klee_assume(number <= OPT_MAX_NUMBER);
+        kleener_make_symbolic(&message->header.code,
+                              sizeof(message->header.code),
+                              "coap_req_code");
+        kleener_make_symbolic(&number,
+                              sizeof(number),
+                              "coap_opt_number");
         message->options[0].number = number;
         local_state = INJECTED;
     }

@@ -91,4 +91,7 @@ void generate_coap_output(CoapMessage *message);
  * request MID, never record it and never report a spurious MID divergence. */
 void generate_coap_output_mid(CoapMessage *message);
 
+/* Variant recorder for the token diff monitor (109): the base schema plus responseToken. */
+void generate_coap_output_token(CoapMessage *message);
+
 #endif

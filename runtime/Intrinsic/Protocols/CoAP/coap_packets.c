@@ -328,3 +328,26 @@ void generate_coap_output_mid(CoapMessage *message)
                     "responsePayloadLength", response_payload_length,
                     "responseMessageId",     response_message_id);
 }
+
+void generate_coap_output_token(CoapMessage *message)
+{
+    /* Same schema as generate_coap_output plus the first 4 response token bytes (shared symbolic token echo check). */
+    uint8_t  response_version        = message->header.version;
+    uint8_t  response_type           = message->header.type;
+    uint8_t  response_code           = message->header.code;
+    uint8_t  response_token_length   = message->header.token_length;
+    uint8_t  response_num_options    = (uint8_t)  message->num_options;
+    uint16_t response_payload_length = (uint16_t) message->payload_length;
+    uint32_t response_token          = ((uint32_t)message->token[0] << 24) |
+                                       ((uint32_t)message->token[1] << 16) |
+                                       ((uint32_t)message->token[2] << 8)  |
+                                        (uint32_t)message->token[3];
+
+    klee_print_expr("responseVersion",       response_version,
+                    "responseType",          response_type,
+                    "responseCode",          response_code,
+                    "responseTokenLength",   response_token_length,
+                    "responseNumOptions",    response_num_options,
+                    "responsePayloadLength", response_payload_length,
+                    "responseToken",         response_token);
+}

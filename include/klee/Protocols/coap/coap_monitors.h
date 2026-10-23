@@ -47,15 +47,20 @@
 #define coap_token_length_diff_test 103
 #define coap_mid_diff_test 104
 #define coap_type_code_diff_test 105
-#define coap_header_joint_diff_test 106
-#define coap_option_joint_diff_test 107
-#define coap_two_options_diff_test 108
-#define coap_code_option_diff_test 109
-#define coap_payload_joint_diff_test 110
-#define coap_opt_len_boundary_diff_test 111
-#define coap_dup_option_diff_test 112
-#define coap_opt_zero_length_diff_test 113
-#define coap_opt_len_full_diff_test 114
+#define coap_code_option_diff_test 106
+#define coap_dup_option_diff_test 107
+#define coap_opt_len_diff_test 108
+#define coap_token_diff_test 109
+#define coap_opt_if_match_diff_test 110
+#define coap_opt_uri_host_diff_test 111
+#define coap_opt_if_none_match_diff_test 112
+#define coap_opt_uri_port_diff_test 113
+#define coap_opt_location_path_diff_test 114
+#define coap_opt_uri_path_diff_test 115
+#define coap_opt_content_format_diff_test 116
+#define coap_opt_max_age_diff_test 117
+#define coap_opt_accept_diff_test 118
+#define coap_opt_location_query_diff_test 119
 
 /* ---- Monitor dispatch table ----
  * One monitor handle per (requirement, side). Every requirement currently
@@ -152,18 +157,27 @@ void mid_diff_testing_server(CoapMessage *message, bool is_message_client_genera
  * matrix (RFC 7252 §§4.1-4.3); subsumes the Empty-message requirement. */
 void type_code_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
 
-/* Multi-field monitors: whole header; one injected option; two injected options; code x Uri-Path number. */
-void header_joint_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-void option_joint_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-void two_options_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+/* Multi-field monitor: code x Uri-Path number. */
 void code_option_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
 
-/* Payload shape x code; one option over the length-encoding boundaries; a repeated option number. */
-void payload_joint_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-void opt_len_boundary_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+/* A repeated option number; one option length over its full range. */
 void dup_option_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-void opt_zero_length_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-void opt_len_full_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_len_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+
+/* Request token bytes symbolic, response token recorded (Token Echo, 5.3.1). */
+void token_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+
+/* One option appended with a symbolic length (0..255), per option number. */
+void opt_if_match_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_uri_host_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_if_none_match_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_uri_port_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_location_path_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_uri_path_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_content_format_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_max_age_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_accept_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_location_query_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
 
 /* Conformance: unknown critical option in a NON request (§5.4.1/§4.3); elective
  * option with an out-of-range length must be ignored (§5.4.3 + §5.4.1). */

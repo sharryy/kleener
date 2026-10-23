@@ -9,8 +9,6 @@
 #define INJECTED 1
 #define DONE     2
 
-#define OPT_MAX_NUMBER 64
-
 static int local_state = INIT;
 static const uint8_t opt_value[1] = {0x01};
 
@@ -20,11 +18,8 @@ void dup_option_diff_testing_server(CoapMessage *message, bool is_message_client
     {
         uint16_t number;
         size_t last = message->num_options;
-        uint16_t prev = last ? message->options[last - 1].number : 0;
 
         kleener_make_symbolic(&number, sizeof(number), "coap_opt_number");
-        klee_assume(number >= prev);
-        klee_assume(number <= OPT_MAX_NUMBER);
 
         message->options[last].number     = number;
         message->options[last].length     = 1;
