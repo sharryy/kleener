@@ -149,6 +149,19 @@ int parse_coap_message(const uint8_t* buf, size_t data_length, CoapMessage* mess
     return 0;
 }
 
+/* Rebuilds v bit by bit, so KLEE forks it into concrete values (only the
+ * feasible ones); see the byte0 note. */
+static uint32_t concrete_bits(uint32_t v, int bits)
+{
+    uint32_t r = 0;
+    int b;
+
+    for (b = bits - 1; b >= 0; b--)
+        if (v & (1u << b))
+            r |= 1u << b;
+    return r;
+}
+
 int serialize_coap_message(const CoapMessage *message,
                            const CoapMessage *shadow,
                            uint8_t *out_buf,
@@ -156,21 +169,12 @@ int serialize_coap_message(const CoapMessage *message,
 {
     if (out_buf_size < 4) return -1;
 
-    /* Header. Build byte0 as a select over concrete candidates for the (2-bit)
-     * type so that a symbolic type does not leave token_length (byte0 & 0x0F)
-     * an unfoldable symbolic expression under KLEE -- which otherwise mis-parses
-     * the options and yields a phantom 4.04. KLEE folds a select over constants
-     * with an identical low nibble; the OR-of-shifted-symbolic form does not. */
-    {
-        uint8_t b0_base = (uint8_t)(((message->header.version & 0x03u) << 6) |
-                                    (message->header.token_length & 0x0Fu));
-        uint8_t t = (uint8_t)(message->header.type & 0x03u);
-        
-        out_buf[0] = (t == 0) ? (uint8_t)(b0_base | 0x00u) :
-                     (t == 1) ? (uint8_t)(b0_base | 0x10u) :
-                     (t == 2) ? (uint8_t)(b0_base | 0x20u) :
-                                (uint8_t)(b0_base | 0x30u);
-    }
+    /* Header. Each byte0 field is made concrete per path: a symbolic field
+     * shifted into byte0 leaves token_length unfoldable under KLEE, which
+     * mis-parses the options and yields a phantom 4.04. */
+    out_buf[0] = (uint8_t)((concrete_bits(message->header.version, 2) << 6) |
+                           (concrete_bits(message->header.type, 2) << 4) |
+                            concrete_bits(message->header.token_length, 4));
     out_buf[1] = message->header.code;
     out_buf[2] = (uint8_t)((message->header.message_id >> 8) & 0xFF);
     out_buf[3] = (uint8_t)( message->header.message_id       & 0xFF);
@@ -180,6 +184,7 @@ int serialize_coap_message(const CoapMessage *message,
         const CoapMessage *sizes = (shadow != NULL) ? shadow : message;
         size_t tkl = sizes->header.token_length;
         size_t num_opts;
+        CoapOption opts[COAP_MAX_OPTIONS_LENGTH];
         uint16_t prev_number = 0;
         size_t i;
         int k;
@@ -197,15 +202,37 @@ int serialize_coap_message(const CoapMessage *message,
         num_opts = message->num_options;
         if (num_opts > COAP_MAX_OPTIONS_LENGTH) num_opts = COAP_MAX_OPTIONS_LENGTH;
 
+        /* For options that existed in the original message use shadow's
+         * concrete length+value; for monitor-injected options beyond
+         * shadow->num_options use the live values the monitor set. */
         for (i = 0; i < num_opts; i++)
         {
-            uint32_t delta  = (uint32_t)(message->options[i].number - prev_number);
-            /* For options that existed in the original message use shadow's
-             * concrete length+value; for monitor-injected options beyond
-             * shadow->num_options use the live values the monitor set. */
             const CoapOption *src = (i < sizes->num_options) ? &sizes->options[i]
                                                              : &message->options[i];
-            uint32_t length = src->length;
+            opts[i].number = message->options[i].number;
+            opts[i].length = src->length;
+            opts[i].value  = src->value;
+        }
+
+        /* Stable sort by number: deltas must be non-negative (RFC 7252 3.1). */
+        for (i = 1; i < num_opts; i++)
+        {
+            CoapOption cur = opts[i];
+            size_t j = i;
+            while (j > 0 && opts[j - 1].number > cur.number)
+            {
+                opts[j] = opts[j - 1];
+                j--;
+            }
+            opts[j] = cur;
+        }
+
+        for (i = 0; i < num_opts; i++)
+        {
+            uint32_t delta  = (uint32_t)(opts[i].number - prev_number);
+            const CoapOption *src = &opts[i];
+            /* A symbolic length would move every later byte to a symbolic offset. */
+            uint32_t length = concrete_bits(src->length, 16);
             uint8_t  delta_ext[2], length_ext[2];
             int      delta_ext_len = 0, length_ext_len = 0;
             uint8_t  delta_nibble  = encode_nibble(delta,  delta_ext,  &delta_ext_len);
@@ -214,7 +241,8 @@ int serialize_coap_message(const CoapMessage *message,
             if (out_off + 1 + (size_t)delta_ext_len + (size_t)length_ext_len + length
                 > out_buf_size) return -1;
 
-            out_buf[out_off++] = (uint8_t)((delta_nibble << 4) | length_nibble);
+            out_buf[out_off++] = (uint8_t)((concrete_bits(delta_nibble, 4) << 4) |
+                                           concrete_bits(length_nibble, 4));
             for (k = 0; k < delta_ext_len;  k++) out_buf[out_off++] = delta_ext[k];
             for (k = 0; k < length_ext_len; k++) out_buf[out_off++] = length_ext[k];
             if (length > 0 && src->value != NULL)
@@ -223,7 +251,7 @@ int serialize_coap_message(const CoapMessage *message,
                 out_off += length;
             }
 
-            prev_number = message->options[i].number;
+            prev_number = opts[i].number;
         }
 
         /* Malformed case (RFC 7252 §3.1): a monitor can request a bare payload
