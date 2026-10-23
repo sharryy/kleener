@@ -9,7 +9,7 @@
  *    request and the Acknowledgement MUST match, and the tokens of the
  *    response and original request MUST match."
  *
- * The existing token-match monitor (exp 7) checks the SERVER echoes the token.
+ * The existing token-match monitor (exp 6) checks the SERVER echoes the token.
  * This is the CLIENT-side dual, and the security-relevant one (RFC 7252 §11.4,
  * response spoofing): a client MUST reject a response whose token does not
  * match an outstanding request. A 16-bit Message ID is far easier for an

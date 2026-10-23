@@ -16,21 +16,21 @@
 #define coap_token_length_requirement    2
 #define coap_code_requirement            3
 #define coap_empty_message_requirement   4
-#define coap_mid_match_requirement       6
-#define coap_token_match_requirement     7
-#define coap_matching_type_requirement   8
-#define coap_repeatable_opts_requirement 9
-#define coap_unrecognized_opts_requirement 10
-#define coap_token_spoof_requirement 11
-#define coap_option_length_requirement 12
-#define coap_payload_marker_requirement 13
-#define coap_separate_token_spoof_requirement 14
-#define coap_separate_token_ok_requirement 15
-#define coap_mid_spoof_requirement 17
-#define coap_non_critical_option_requirement 18
-#define coap_elective_bad_length_requirement 19
-#define coap_dup_elective_requirement 20
-#define coap_reserved_option_requirement 21
+#define coap_mid_match_requirement       5
+#define coap_token_match_requirement     6
+#define coap_matching_type_requirement   7
+#define coap_repeatable_opts_requirement 8
+#define coap_unrecognized_opts_requirement 9
+#define coap_token_spoof_requirement 10
+#define coap_option_length_requirement 11
+#define coap_payload_marker_requirement 12
+#define coap_separate_token_spoof_requirement 13
+#define coap_separate_token_ok_requirement 14
+#define coap_mid_spoof_requirement 15
+#define coap_non_critical_option_requirement 16
+#define coap_elective_bad_length_requirement 17
+#define coap_dup_elective_requirement 18
+#define coap_reserved_option_requirement 19
 
 /* ---- Differential-testing RECORDING monitor IDs ----
  * Numbered from 100 to stay clear of the conformance-monitor range above. A
@@ -129,8 +129,8 @@ void is_coap_option_length_valid(CoapMessage *message, bool is_message_client_ge
 void is_coap_payload_marker_valid(CoapMessage *message, bool is_message_client_generated);
 
 /* Client-side separate-response token matching (RFC 7252 §5.2.2/§5.3.2): reshape
- * the response to a separate form (NON, fresh MID); exp 14 corrupts the token,
- * exp 15 keeps it as a control. Detection is in the harness response handler. */
+ * the response to a separate form (NON, fresh MID); exp 13 corrupts the token,
+ * exp 14 keeps it as a control. Detection is in the harness response handler. */
 void is_coap_separate_token_spoof(CoapMessage *message, bool is_message_client_generated);
 void is_coap_separate_token_ok(CoapMessage *message, bool is_message_client_generated);
 

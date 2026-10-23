@@ -10,16 +10,16 @@
  * request (empty ACK), then later sends the response in a NEW message with a
  * DIFFERENT Message ID. The client therefore CANNOT match it by MID — it must
  * match it to the outstanding request BY TOKEN (§5.3.2). This is the companion
- * to the piggybacked-ACK case (exp 11): if libcoap verifies the token here but
+ * to the piggybacked-ACK case (exp 10): if libcoap verifies the token here but
  * not on the piggybacked path, the token-spoof finding is sharply "piggybacked
  * only"; if it skips the token here too, the gap is broader.
  *
  * Both monitors reshape the server->client response into a separate-response
  * form: type NON, a fresh Message ID (so it is not a piggyback MID-match), code
  * left at 2.xx. They differ only in the token:
- *   exp 14 (spoof):   flip the token  -> a conformant client MUST drop it.
- *   exp 15 (control): keep the token  -> a conformant client SHOULD deliver it,
- *                     proving the separate path works (so a drop in exp 14 means
+ *   exp 13 (spoof):   flip the token  -> a conformant client MUST drop it.
+ *   exp 14 (control): keep the token  -> a conformant client SHOULD deliver it,
+ *                     proving the separate path works (so a drop in exp 13 means
  *                     token-checking, not "separate responses ignored").
  *
  * Detection is client-side in the harness response handler (token compared to
@@ -32,7 +32,7 @@ static void reshape_to_separate(CoapMessage *message)
 	message->header.message_id = (uint16_t)(message->header.message_id + 1); /* fresh MID */
 }
 
-/* exp 14 — separate response carrying the WRONG token. */
+/* exp 13 — separate response carrying the WRONG token. */
 void is_coap_separate_token_spoof(CoapMessage *message, bool is_message_client_generated)
 {
 	if (is_message_client_generated)
@@ -43,7 +43,7 @@ void is_coap_separate_token_spoof(CoapMessage *message, bool is_message_client_g
 		message->token[i] ^= 0xFF;
 }
 
-/* exp 15 — control: separate response carrying the CORRECT token. */
+/* exp 14 — control: separate response carrying the CORRECT token. */
 void is_coap_separate_token_ok(CoapMessage *message, bool is_message_client_generated)
 {
 	if (is_message_client_generated)

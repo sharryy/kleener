@@ -4,12 +4,12 @@
 #include "klee/klee.h"
 #include <stddef.h>
 
-/* Dual of the token-spoof monitor (exp 11). RFC 7252 §5.3.2 requires a
+/* Dual of the token-spoof monitor (exp 10). RFC 7252 §5.3.2 requires a
  * piggybacked response to match the request on BOTH Message ID AND token.
- * exp 11 showed libcoap ignores the token (wrong token + right MID => still
+ * exp 10 showed libcoap ignores the token (wrong token + right MID => still
  * matched). This monitor tests the other axis: keep the token CORRECT, flip the
  * Message ID, and observe whether libcoap discards the response (no MID match)
- * or still delivers it. If matching is MID-keyed (as exp 11 implies), the
+ * or still delivers it. If matching is MID-keyed (as exp 10 implies), the
  * wrong-MID response finds no outstanding request and is dropped — the harness
  * response handler then never fires. Together the two experiments pin the match
  * function down to "Message ID alone".
