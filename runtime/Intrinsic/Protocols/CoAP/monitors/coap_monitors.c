@@ -58,7 +58,8 @@ coap_monitor_handle set_coap_monitor_handle(int experiment, SIDE side_to_check)
         [coap_mid_diff_test]                    = {mid_diff_testing_server,          NULL},
         [coap_type_code_diff_test]              = {type_code_diff_testing_server,    NULL},
         [coap_code_option_diff_test]            = {code_option_diff_testing_server,  NULL},
-        [coap_dup_option_diff_test]             = {dup_option_diff_testing_server,      NULL},
+        /* 107 disabled: FreeCoAP forks after its real send, so two paths share one real datagram */
+        // [coap_dup_option_diff_test]             = {dup_option_diff_testing_server,      NULL},
         [coap_opt_len_diff_test]                = {opt_len_diff_testing_server,         NULL},
         [coap_token_diff_test]                  = {token_diff_testing_server,           NULL},
         [coap_opt_if_match_diff_test]           = {opt_if_match_diff_testing_server, NULL},
