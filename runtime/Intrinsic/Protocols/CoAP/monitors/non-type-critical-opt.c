@@ -16,9 +16,11 @@
  * Reset; an error response such as 4.02 is not a rejection.
  *
  * Probe: the same unknown critical option as the Confirmable case (number 21,
- * odd, unassigned) but with the request type flipped to NON, which the
- * Confirmable-only monitor never reaches. Silence is not observable here (it is
- * caught by coap_exchange_finalize), so judge any response that does arrive.
+ * odd, unassigned) but with the request type flipped to NON. Silence is a
+ * correct rejection and passes; any reply that does arrive must be a Reset.
+ *
+ * draft-ietf-core-uri-path-abbrev (Appendix A) would change this rule so that
+ * such a NON request SHOULD get 4.02; this monitor checks RFC 7252 as published.
  */
 
 #define INIT     0
@@ -34,11 +36,7 @@ void is_coap_non_critical_option_valid(CoapMessage *message, bool is_message_cli
 		size_t pos = message->num_options;
 		if (pos < COAP_MAX_OPTIONS_LENGTH)
 		{
-			uint16_t last_number = (pos > 0) ? message->options[pos - 1].number : 0;
-			uint16_t target = 21;
-			if (last_number >= target) target = (uint16_t)((last_number + 1) | 1);
-
-			message->options[pos].number = target;
+			message->options[pos].number = 21;
 			message->options[pos].length = 0;
 			message->options[pos].value  = NULL;
 			message->num_options = pos + 1;

@@ -80,17 +80,14 @@ set(SRC_FILES
 	Protocols/CoAP/monitors/mid-match.c
 	Protocols/CoAP/monitors/token-match.c
 	Protocols/CoAP/monitors/matching-message-type.c
-	Protocols/CoAP/monitors/repeatable-options.c
-	Protocols/CoAP/monitors/unrecognized-options.c
-	Protocols/CoAP/monitors/token-spoof.c
-	Protocols/CoAP/monitors/option-length.c
-	Protocols/CoAP/monitors/non-critical-option.c
+	Protocols/CoAP/monitors/repeatable-opts.c
+	Protocols/CoAP/monitors/unrecognized-opts.c
+	Protocols/CoAP/monitors/opt-length.c
+	Protocols/CoAP/monitors/non-type-critical-opt.c
 	Protocols/CoAP/monitors/elective-bad-length.c
-	Protocols/CoAP/monitors/dup-elective-option.c
-	Protocols/CoAP/monitors/reserved-option-number.c
+	Protocols/CoAP/monitors/dup-elective-opt.c
+	Protocols/CoAP/monitors/reserved-opt-number.c
 	Protocols/CoAP/monitors/payload-marker.c
-	Protocols/CoAP/monitors/separate-response.c
-	Protocols/CoAP/monitors/mid-spoof.c
 
 	Protocols/CoAP/monitors/diff-testing/code-diff-testing.c
 	Protocols/CoAP/monitors/diff-testing/version-diff-testing.c

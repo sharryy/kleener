@@ -31,12 +31,7 @@ void is_coap_elective_bad_length_valid(CoapMessage *message, bool is_message_cli
 		size_t pos = message->num_options;
 		if (pos < COAP_MAX_OPTIONS_LENGTH)
 		{
-			uint16_t last_number = (pos > 0) ? message->options[pos - 1].number : 0;
-			uint16_t number = COAP_OPTION_MAX_AGE;
-			/* Keep the number monotonic and even (elective = bit 0 clear). */
-			if (last_number >= number) number = (uint16_t)((last_number + 2) & ~1u);
-
-			message->options[pos].number = number;
+			message->options[pos].number = COAP_OPTION_MAX_AGE;
 			message->options[pos].length = sizeof(bad_max_age);
 			message->options[pos].value  = bad_max_age;
 			message->num_options = pos + 1;

@@ -31,11 +31,7 @@ void is_coap_dup_elective_option_valid(CoapMessage *message, bool is_message_cli
 		size_t pos = message->num_options;
 		if (pos + 2 <= COAP_MAX_OPTIONS_LENGTH)
 		{
-			uint16_t last_number = (pos > 0) ? message->options[pos - 1].number : 0;
 			uint16_t number = COAP_OPTION_CONTENT_FORMAT;
-			/* Keep the number monotonic and even (elective = bit 0 clear). */
-			if (last_number >= number) number = (uint16_t)((last_number + 2) & ~1u);
-
 			message->options[pos].number     = number;
 			message->options[pos].length     = sizeof(cf_value);
 			message->options[pos].value      = cf_value;

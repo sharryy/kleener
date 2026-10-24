@@ -32,16 +32,7 @@ void is_coap_unrecognized_options_valid(CoapMessage *message, bool is_message_cl
 		size_t pos = message->num_options;
 		if (pos < COAP_MAX_OPTIONS_LENGTH)
 		{
-			uint16_t last_number = (pos > 0) ? message->options[pos - 1].number : 0;
-			uint16_t target = 21; /* odd, unassigned, monotonic-friendly */
-			/* Must stay > last_number AND odd (critical = bit 0 set). Plain
-			 * last_number+2 inherits last_number's parity, so an even
-			 * predecessor would yield an even (elective) number and silently
-			 * stop exercising the critical-option path. (n+1)|1 is the
-			 * smallest odd strictly greater than n. */
-			if (last_number >= target) target = (uint16_t)((last_number + 1) | 1);
-
-			message->options[pos].number = target;
+			message->options[pos].number = 21; /* odd (critical), unassigned */
 			message->options[pos].length = 0;
 			message->options[pos].value  = NULL;
 			message->num_options = pos + 1;

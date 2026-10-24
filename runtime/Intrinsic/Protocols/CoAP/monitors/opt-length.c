@@ -17,8 +17,7 @@
  * 4.xx error / drop). If libcoap answers 2.xx, it processed a message carrying a
  * malformed critical option as success.
  *
- * Appended (number 23 > the harness request's Uri-Path 11) so the serializer's
- * monotonic delta encoding stays valid. Judge only the first response.
+ * Judge only the first response.
  */
 
 #define INIT     0
@@ -36,13 +35,7 @@ void is_coap_option_length_valid(CoapMessage *message, bool is_message_client_ge
 		size_t pos = message->num_options;
 		if (pos < COAP_MAX_OPTIONS_LENGTH)
 		{
-			uint16_t last_number = (pos > 0) ? message->options[pos - 1].number : 0;
-			/* Keep the number monotonic; Block2 (23) is already > Uri-Path (11),
-			 * but guard in case the request carried a higher option. */
-			uint16_t number = COAP_OPTION_BLOCK2;
-			if (last_number >= number) number = (uint16_t)((last_number + 1) | 1);
-
-			message->options[pos].number = number;
+			message->options[pos].number = COAP_OPTION_BLOCK2;
 			message->options[pos].length = sizeof(bad_block); /* 4 — out of range */
 			message->options[pos].value  = bad_block;
 			message->num_options = pos + 1;

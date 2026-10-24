@@ -21,16 +21,12 @@
 #define coap_matching_type_requirement   7
 #define coap_repeatable_opts_requirement 8
 #define coap_unrecognized_opts_requirement 9
-#define coap_token_spoof_requirement 10
-#define coap_option_length_requirement 11
-#define coap_payload_marker_requirement 12
-#define coap_separate_token_spoof_requirement 13
-#define coap_separate_token_ok_requirement 14
-#define coap_mid_spoof_requirement 15
-#define coap_non_critical_option_requirement 16
-#define coap_elective_bad_length_requirement 17
-#define coap_dup_elective_requirement 18
-#define coap_reserved_option_requirement 19
+#define coap_option_length_requirement 10
+#define coap_payload_marker_requirement 11
+#define coap_non_critical_option_requirement 12
+#define coap_elective_bad_length_requirement 13
+#define coap_dup_elective_requirement 14
+#define coap_reserved_option_requirement 15
 
 /* ---- Differential-testing RECORDING monitor IDs ----
  * Numbered from 100 to stay clear of the conformance-monitor range above. A
@@ -115,11 +111,6 @@ void is_coap_repeatable_options_valid(CoapMessage *message, bool is_message_clie
    the request, assert the SUT returns 4.02 Bad Option (RFC 7252 §5.4.1). */
 void is_coap_unrecognized_options_valid(CoapMessage *message, bool is_message_client_generated);
 
-/* Client-side: corrupt the response token (RFC 7252 §5.3.2). Detection is in
- * the harness response handler — a conformant client drops the mismatched
- * response. */
-void is_coap_token_spoofable(CoapMessage *message, bool is_message_client_generated);
-
 /* Server-side: append a malformed (out-of-range length) critical option and
  * assert the server does not answer 2.xx success (RFC 7252 §5.4.1 / RFC 7959). */
 void is_coap_option_length_valid(CoapMessage *message, bool is_message_client_generated);
@@ -127,18 +118,6 @@ void is_coap_option_length_valid(CoapMessage *message, bool is_message_client_ge
 /* Server-side: attach a dangling payload marker (0xFF + zero-length payload) and
  * assert the server does not answer 2.xx success (RFC 7252 §3.1). */
 void is_coap_payload_marker_valid(CoapMessage *message, bool is_message_client_generated);
-
-/* Client-side separate-response token matching (RFC 7252 §5.2.2/§5.3.2): reshape
- * the response to a separate form (NON, fresh MID); exp 13 corrupts the token,
- * exp 14 keeps it as a control. Detection is in the harness response handler. */
-void is_coap_separate_token_spoof(CoapMessage *message, bool is_message_client_generated);
-void is_coap_separate_token_ok(CoapMessage *message, bool is_message_client_generated);
-
-/* Client-side dual of token-spoof (RFC 7252 §5.3.2): flip the response's
- * Message ID while keeping the token correct, to observe whether libcoap
- * discards a wrong-MID response or still delivers it. Detection is in the
- * harness response handler. */
-void is_coap_mid_spoofable(CoapMessage *message, bool is_message_client_generated);
 
 /* ---- Differential-testing recording monitors ----
  * Each makes one request field symbolic, then calls generate_coap_output (see

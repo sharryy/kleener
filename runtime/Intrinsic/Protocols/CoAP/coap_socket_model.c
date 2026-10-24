@@ -93,6 +93,7 @@ static bool coap_requirement_expects_response(int exp)
 	case coap_unrecognized_opts_requirement: /* RFC 7252 §5.4.1: MUST return 4.02 */
 	case coap_mid_match_requirement:         /* valid request MUST be answered (MID echo) */
 	case coap_token_match_requirement:       /* valid request MUST be answered (token echo) */
+	case coap_payload_marker_requirement:    /* RFC 7252 §4.2: format error MUST draw a Reset */
 		return true;
 	default:
 		return false;

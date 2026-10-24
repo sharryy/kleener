@@ -28,16 +28,11 @@ void is_coap_repeatable_options_valid(CoapMessage *message, bool is_message_clie
 		/* Append two Accept options (option 17). Accept is odd (critical)
 		 * AND non-repeatable per RFC 7252 §5.10 Table 4, so libcoap's
 		 * duplicate-non-repeatable check should reject the packet via the
-		 * critical-option path, which is what PR #1389 fixed. The on-wire
-		 * delta between the two Accepts is 0 and both have length 0 — the
-		 * monotonic-delta wire form holds. */
+		 * critical-option path, which is what PR #1389 fixed. */
 		size_t pos = message->num_options;
 		if (pos + 2 <= COAP_MAX_OPTIONS_LENGTH)
 		{
-			uint16_t last_number = (pos > 0) ? message->options[pos - 1].number : 0;
 			uint16_t target = COAP_OPTION_ACCEPT; /* 17 */
-			if (last_number > target) target = last_number;
-
 			message->options[pos].number = target;
 			message->options[pos].length = 0;
 			message->options[pos].value  = NULL;
