@@ -21,7 +21,7 @@
 static int local_state = INIT;
 static uint16_t injected_mid;
 
-void is_coap_mid_matches_request(CoapMessage *message, bool is_message_client_generated)
+void is_coap_mid_match_valid(CoapMessage *message, bool is_message_client_generated)
 {
 	if (is_message_client_generated && local_state == INIT)
 	{

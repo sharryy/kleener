@@ -23,7 +23,7 @@
 static int local_state = INIT;
 static const uint8_t value[1] = {0x01};
 
-void is_coap_reserved_option_number_valid(CoapMessage *message, bool is_message_client_generated)
+void is_coap_reserved_opt_number_valid(CoapMessage *message, bool is_message_client_generated)
 {
 	if (is_message_client_generated && local_state == INIT)
 	{

@@ -12,7 +12,7 @@
 static int local_state = INIT;
 static const uint8_t opt_value[1] = {0x01};
 
-void dup_option_diff_testing_server(CoapMessage *message, bool is_message_client_generated)
+void dup_opt_diff_testing_server(CoapMessage *message, bool is_message_client_generated)
 {
     if (is_message_client_generated && local_state == INIT && message->num_options + 2 <= COAP_MAX_OPTIONS_LENGTH)
     {

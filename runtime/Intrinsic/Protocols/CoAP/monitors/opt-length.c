@@ -28,7 +28,7 @@
 static int local_state = INIT;
 static const uint8_t bad_block[4] = {0x00, 0x00, 0x00, 0x00}; /* 4 bytes > max 3 */
 
-void is_coap_option_length_valid(CoapMessage *message, bool is_message_client_generated)
+void is_coap_opt_length_valid(CoapMessage *message, bool is_message_client_generated)
 {
 	if (is_message_client_generated && local_state == INIT)
 	{

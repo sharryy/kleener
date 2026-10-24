@@ -21,7 +21,7 @@
 
 static int local_state = INIT;
 
-void is_coap_repeatable_options_valid(CoapMessage *message, bool is_message_client_generated)
+void is_coap_repeatable_opts_valid(CoapMessage *message, bool is_message_client_generated)
 {
 	if (is_message_client_generated && local_state == INIT)
 	{

@@ -24,7 +24,7 @@
 static int local_state = INIT;
 static const uint8_t cf_value[1] = {0x00};
 
-void is_coap_dup_elective_option_valid(CoapMessage *message, bool is_message_client_generated)
+void is_coap_dup_elective_opt_valid(CoapMessage *message, bool is_message_client_generated)
 {
 	if (is_message_client_generated && local_state == INIT)
 	{

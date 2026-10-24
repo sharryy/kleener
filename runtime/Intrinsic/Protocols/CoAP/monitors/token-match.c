@@ -22,7 +22,7 @@ static int     local_state = INIT;
 static uint8_t injected_token[COAP_MAX_TOKEN_LENGTH];
 static uint8_t injected_tkl;
 
-void is_coap_token_matches_request(CoapMessage *message, bool is_message_client_generated)
+void is_coap_token_match_valid(CoapMessage *message, bool is_message_client_generated)
 {
 	if (is_message_client_generated && local_state == INIT)
 	{
