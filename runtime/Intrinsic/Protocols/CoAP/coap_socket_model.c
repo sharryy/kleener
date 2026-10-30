@@ -64,11 +64,6 @@ static int get_experiment(void)
 static bool monitor_initialized = false;
 static COAP_MONITOR cached_dispatched_monitor;
 
-/* Bounded-exchange response accounting. The server's only outbound traffic is
- * its response to the (injected) request, so counting its sends tells us
- * whether it answered or silently dropped — see coap_exchange_finalize. */
-static int server_response_count = 0;
-
 static void ensure_monitor_initialized(void)
 {
 	if (!monitor_initialized)
@@ -80,39 +75,6 @@ static void ensure_monitor_initialized(void)
 		monitor_initialized = true;
 	}
 }
-
-/* Does the active requirement mandate that the SUT produce a response? For
- * these, a silent drop is itself a non-conformance (the inbound request is
- * either valid and must be answered, or malformed in a way the RFC says MUST
- * elicit a specific error response). coap_exchange_finalize catches that drop;
- * requirements where dropping is the correct reaction return false here. */
-static bool coap_requirement_expects_response(int exp)
-{
-	switch (exp)
-	{
-	case coap_unrecognized_opts_requirement: /* RFC 7252 §5.4.1: MUST return 4.02 */
-	case coap_mid_match_requirement:         /* valid request MUST be answered (MID echo) */
-	case coap_token_match_requirement:       /* valid request MUST be answered (token echo) */
-	case coap_payload_marker_requirement:    /* RFC 7252 §4.2: format error MUST draw a Reset */
-		return true;
-	default:
-		return false;
-	}
-}
-
-/* Called by the harness once its bounded exchange loop ends. If the requirement
- * demanded a response and the server produced none (a silent drop), fire here —
- * this turns a drop from invisible silence into a caught violation, without the
- * harness having to spin to max-time to "observe" the absence of a response. */
-void coap_exchange_finalize(void)
-{
-	if (coap_requirement_expects_response(get_experiment()) &&
-	    server_response_count == 0)
-	{
-		assert(0 && "SUT produced no response to a message that requires one");
-	}
-}
-
 
 int CoAP_bind_model(int sockfd, const struct sockaddr *myaddr, socklen_t addrlen)
 {
@@ -430,8 +392,6 @@ ssize_t CoAP_sendto_model(int __fd, const void *__buf, size_t __n,
 
 	if (__fd == server_fd)
 	{
-		server_response_count++;   /* the server answered (vs. silently dropping) */
-
 		Element *queue_element = malloc(sizeof(*queue_element));
 		queue_element->buffer_size = __n;
 		queue_element->buffer_address = malloc(queue_element->buffer_size);

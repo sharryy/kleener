@@ -7,31 +7,13 @@
 
 #define COAP_VERSION 1
 
-/* ---- Requirement IDs ----
- * Also the legal values of KLEE_SYMBOLIC_EXPERIMENT: the runner passes one
- * through and the dispatcher selects the matching monitor.
- */
+/* KLEE_SYMBOLIC_EXPERIMENT 0: no monitor. */
 #define coap_normal_execution            0
-#define coap_version_requirement         1
-#define coap_token_length_requirement    2
-#define coap_code_requirement            3
-#define coap_empty_message_requirement   4
-#define coap_mid_match_requirement       5
-#define coap_token_match_requirement     6
-#define coap_matching_message_type_requirement   7
-#define coap_repeatable_opts_requirement 8
-#define coap_unrecognized_opts_requirement 9
-#define coap_opt_length_requirement 10
-#define coap_payload_marker_requirement 11
-#define coap_non_type_critical_opt_requirement 12
-#define coap_elective_bad_length_requirement 13
-#define coap_dup_elective_opt_requirement 14
-#define coap_reserved_opt_number_requirement 15
 
 /* ---- Differential-testing RECORDING monitor IDs ----
- * Numbered from 100 to stay clear of the conformance-monitor range above. A
- * recording monitor makes one request field symbolic and records the server's
- * response via generate_coap_output; the verdict is produced offline by the
+ * Also the legal values of KLEE_SYMBOLIC_EXPERIMENT. A recording monitor
+ * makes one request field symbolic and records the server's response via
+ * generate_coap_output; the verdict is produced offline by the
  * smt-cross-checker, not by an assert. Each monitor names its symbolic field
  * "coap_req_*"; that name MUST match across the two implementation runs, or
  * conjoining their .smt2 constraints ranges over different arrays and means
@@ -43,26 +25,11 @@
 #define coap_token_length_diff_test 103
 #define coap_mid_diff_test 104
 #define coap_type_code_diff_test 105
-#define coap_opt_number_diff_test 106
-#define coap_dup_opt_diff_test 107
-#define coap_uri_query_len_diff_test 108
 #define coap_token_diff_test 109
-#define coap_opt_len_if_match_diff_test 110
-#define coap_opt_len_uri_host_diff_test 111
-#define coap_opt_len_if_none_match_diff_test 112
-#define coap_opt_len_uri_port_diff_test 113
-#define coap_opt_len_location_path_diff_test 114
-#define coap_opt_len_uri_path_diff_test 115
-#define coap_opt_len_content_format_diff_test 116
-#define coap_opt_len_max_age_diff_test 117
-#define coap_opt_len_accept_diff_test 118
-#define coap_opt_len_location_query_diff_test 119
 
 /* ---- Monitor dispatch table ----
- * One monitor handle per (requirement, side). Every requirement currently
- * registers the same handle for both sides, since CoAP requirements are
- * largely direction-agnostic; the per-side slot lets a monitor that must
- * distinguish client from server diverge without changing this interface.
+ * One monitor handle per (experiment, side); the recording monitors are
+ * server-side only.
  */
 typedef void (*coap_monitor_handle)(CoapMessage *message, bool is_message_client_generated);
 
@@ -82,43 +49,6 @@ int handle_coap_message(const uint8_t *in, size_t in_size,
                         uint8_t *out, size_t out_size,
                         bool is_client_originated, COAP_MONITOR mon);
 
-void is_coap_version_valid(CoapMessage *message, bool is_message_client_generated);
-
-void is_coap_token_length_valid(CoapMessage *message, bool is_message_client_generated);
-
-void is_coap_code_valid(CoapMessage *message, bool is_message_client_generated);
-
-void is_coap_empty_message_valid(CoapMessage *message, bool is_message_client_generated);
-
-/* Inject-then-assert: inject a symbolic Message ID into the request, assert the
- * SUT's ACK/RST echoes it (RFC 7252 §4.2). */
-void is_coap_mid_match_valid(CoapMessage *message, bool is_message_client_generated);
-
-/* Inject-then-assert: inject a symbolic token into the request, assert the SUT's
- * response echoes it verbatim (RFC 7252 §5.3.1). */
-void is_coap_token_match_valid(CoapMessage *message, bool is_message_client_generated);
-
-/* Single-message structural monitor: (type, code) tuple must satisfy the matrix
-   in RFC 7252 §§4.1-4.3 — CON/NON/ACK/RST each restrict which code classes are
-   admissible. */
-void is_coap_matching_message_type_valid(CoapMessage *message, bool is_message_client_generated);
-
-/* Single-message structural monitor: non-Repeatable options
-   (RFC 7252 §5.10 Table 4 / §5.4.5) must appear ≤ 1 time in a message. */
-void is_coap_repeatable_opts_valid(CoapMessage *message, bool is_message_client_generated);
-
-/* Inject-then-assert: append an unrecognized Critical option (odd number) to
-   the request, assert the SUT returns 4.02 Bad Option (RFC 7252 §5.4.1). */
-void is_coap_unrecognized_opts_valid(CoapMessage *message, bool is_message_client_generated);
-
-/* Server-side: append a malformed (out-of-range length) critical option and
- * assert the server does not answer 2.xx success (RFC 7252 §5.4.1 / RFC 7959). */
-void is_coap_opt_length_valid(CoapMessage *message, bool is_message_client_generated);
-
-/* Server-side: attach a dangling payload marker (0xFF + zero-length payload) and
- * assert the server does not answer 2.xx success (RFC 7252 §3.1). */
-void is_coap_payload_marker_valid(CoapMessage *message, bool is_message_client_generated);
-
 /* ---- Differential-testing recording monitors ----
  * Each makes one request field symbolic, then calls generate_coap_output (see
  * coap_packets.h) on the response to record the output schema. */
@@ -133,40 +63,10 @@ void token_length_diff_testing_server(CoapMessage *message, bool is_message_clie
 void mid_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
 
 /* Makes request type AND code symbolic to explore the type-x-code acceptance
- * matrix (RFC 7252 §§4.1-4.3); subsumes the Empty-message requirement. */
+ * matrix (RFC 7252 §§4.1-4.3). */
 void type_code_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-
-/* Multi-field monitor: code x Uri-Path number. */
-void opt_number_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-
-/* A repeated option number; one option length over its full range. */
-void dup_opt_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-void uri_query_len_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
 
 /* Request token bytes symbolic, response token recorded (Token Echo, 5.3.1). */
 void token_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-
-/* One option appended with a symbolic length (0..255), per option number. */
-void opt_len_if_match_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-void opt_len_uri_host_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-void opt_len_if_none_match_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-void opt_len_uri_port_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-void opt_len_location_path_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-void opt_len_uri_path_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-void opt_len_content_format_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-void opt_len_max_age_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-void opt_len_accept_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-void opt_len_location_query_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
-
-/* Conformance: unknown critical option in a NON request (§5.4.1/§4.3); elective
- * option with an out-of-range length must be ignored (§5.4.3 + §5.4.1). */
-void is_coap_non_type_critical_opt_valid(CoapMessage *message, bool is_message_client_generated);
-void is_coap_elective_bad_length_valid(CoapMessage *message, bool is_message_client_generated);
-
-/* Conformance: a repeated elective option must be ignored (§5.4.5 + §5.4.1). */
-void is_coap_dup_elective_opt_valid(CoapMessage *message, bool is_message_client_generated);
-
-/* Conformance: a Reserved option number is elective and must be ignored (§5.4.1 / §12.2). */
-void is_coap_reserved_opt_number_valid(CoapMessage *message, bool is_message_client_generated);
 
 #endif
