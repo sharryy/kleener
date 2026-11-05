@@ -81,6 +81,10 @@ set(SRC_FILES
 	Protocols/CoAP/monitors/diff-testing/mid-diff-testing.c
 	Protocols/CoAP/monitors/diff-testing/type-code-diff-testing.c
 	Protocols/CoAP/monitors/diff-testing/token-diff-testing.c
+	Protocols/CoAP/monitors/diff-testing/opt-number-diff-testing.c
+	Protocols/CoAP/monitors/diff-testing/dup-opt-diff-testing.c
+	Protocols/CoAP/monitors/diff-testing/uri-query-len-diff-testing.c
+	Protocols/CoAP/monitors/diff-testing/opt-len-diff-testing.c
 	# Differential Testing Monitors
 	Protocols/DTLS/monitors/diff-testing/content-type-diff-testing.c
 	Protocols/DTLS/monitors/diff-testing/epoch-diff-testing.c

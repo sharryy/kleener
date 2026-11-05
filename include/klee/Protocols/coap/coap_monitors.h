@@ -25,7 +25,20 @@
 #define coap_token_length_diff_test 103
 #define coap_mid_diff_test 104
 #define coap_type_code_diff_test 105
+#define coap_opt_number_diff_test 106
+#define coap_dup_opt_diff_test 107
+#define coap_uri_query_len_diff_test 108
 #define coap_token_diff_test 109
+#define coap_opt_len_if_match_diff_test 110
+#define coap_opt_len_uri_host_diff_test 111
+#define coap_opt_len_if_none_match_diff_test 112
+#define coap_opt_len_uri_port_diff_test 113
+#define coap_opt_len_location_path_diff_test 114
+#define coap_opt_len_uri_path_diff_test 115
+#define coap_opt_len_content_format_diff_test 116
+#define coap_opt_len_max_age_diff_test 117
+#define coap_opt_len_accept_diff_test 118
+#define coap_opt_len_location_query_diff_test 119
 
 /* ---- Monitor dispatch table ----
  * One monitor handle per (experiment, side); the recording monitors are
@@ -68,5 +81,20 @@ void type_code_diff_testing_server(CoapMessage *message, bool is_message_client_
 
 /* Request token bytes symbolic, response token recorded (Token Echo, 5.3.1). */
 void token_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+
+/* One option appended: symbolic number (106), repeated symbolic number (107), symbolic length (108, 110-119). */
+void opt_number_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void dup_opt_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void uri_query_len_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_len_if_match_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_len_uri_host_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_len_if_none_match_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_len_uri_port_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_len_location_path_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_len_uri_path_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_len_content_format_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_len_max_age_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_len_accept_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
+void opt_len_location_query_diff_testing_server(CoapMessage *message, bool is_message_client_generated);
 
 #endif

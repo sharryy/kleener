@@ -37,6 +37,19 @@ coap_monitor_handle set_coap_monitor_handle(int experiment, SIDE side_to_check)
         [coap_mid_diff_test]                    = {mid_diff_testing_server,          NULL},
         [coap_type_code_diff_test]              = {type_code_diff_testing_server,    NULL},
         [coap_token_diff_test]                  = {token_diff_testing_server,           NULL},
+        [coap_opt_number_diff_test] = {opt_number_diff_testing_server, NULL},
+        [coap_dup_opt_diff_test] = {dup_opt_diff_testing_server, NULL},
+        [coap_uri_query_len_diff_test] = {uri_query_len_diff_testing_server, NULL},
+        [coap_opt_len_if_match_diff_test] = {opt_len_if_match_diff_testing_server, NULL},
+        [coap_opt_len_uri_host_diff_test] = {opt_len_uri_host_diff_testing_server, NULL},
+        [coap_opt_len_if_none_match_diff_test] = {opt_len_if_none_match_diff_testing_server, NULL},
+        [coap_opt_len_uri_port_diff_test] = {opt_len_uri_port_diff_testing_server, NULL},
+        [coap_opt_len_location_path_diff_test] = {opt_len_location_path_diff_testing_server, NULL},
+        [coap_opt_len_uri_path_diff_test] = {opt_len_uri_path_diff_testing_server, NULL},
+        [coap_opt_len_content_format_diff_test] = {opt_len_content_format_diff_testing_server, NULL},
+        [coap_opt_len_max_age_diff_test] = {opt_len_max_age_diff_testing_server, NULL},
+        [coap_opt_len_accept_diff_test] = {opt_len_accept_diff_testing_server, NULL},
+        [coap_opt_len_location_query_diff_test] = {opt_len_location_query_diff_testing_server, NULL},
     };
 
     if (experiment < 0 || experiment >= (int)(sizeof(table) / sizeof(table[0])))
